@@ -14,7 +14,7 @@ This API was created using a simple to use package called [hug](http://www.hug.r
 ### Running the API
 
 ```bash
-    hug -f RESTful/SimpleAPI.py
+    hug -f PythonRESTful/RESTful/SimpleAPI.py
 ```
 
 ### Endpoints

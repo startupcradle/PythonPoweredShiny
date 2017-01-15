@@ -21,11 +21,15 @@ if (!is.installed("DT")) {
 if (!is.installed("jsonlite")) {
   install.packages("jsonlite")
 }
+if (!is.installed("shinydashboard")) {
+  install.packages("shinydashboard")
+}
 
 # Load dependencies -------------------------------------------------------
 library(shiny)
 library(DT)
 library(jsonlite)
+library(shinydashboard)
 
 # Pull from URL -----------------------------------------------------------
 get_API <- function(url) {
@@ -33,3 +37,31 @@ get_API <- function(url) {
   json_data_frame <- fromJSON(df$payload)
   json_data_frame
 }
+
+
+# Simple Authentication ---------------------------------------------------
+# Ideally this needs to be in a secure location...
+credentials = list("uadmin" = "padmin",
+                   "uuser" = "puser")
+
+login <- box(title = "Login Page",
+             textInput("userName",
+                       "Username"),
+             passwordInput("passwd", 
+                           "Password"),
+             br(),
+             actionButton("Login", 
+                          "Log in"))
+
+loginfail <- box(title = "Login Page",
+                 textInput("userName", 
+                           "Username"),
+                 passwordInput("passwd", 
+                               "Password"),
+                 p("Username or password incorrect"),
+                 br(),
+                 actionButton("Login", label = "Log in"))
+
+# 0: not attempted, -1: failed, 1: passed
+Logged = FALSE
+LoginPass = 0

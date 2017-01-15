@@ -10,7 +10,7 @@
 #
 
 # Server.R  ---------------------------------------------------------------
-shinyServer(function(input, output) {
+shinyServer(function(input, output, session) {
   
   # Storing data Server Side ----------------------------------------------
   # The API provide three endpoints:
@@ -24,6 +24,28 @@ shinyServer(function(input, output) {
       "pressure" = get_API("http://localhost:8000/pressure"),
       "cars" = get_API("http://localhost:8000/cars")
     )
+  })
+  
+  # Authentication --------------------------------------------------------
+  USER <- reactiveValues(Logged = Logged, LoginPass = LoginPass)
+  observe({
+    if (USER$Logged == FALSE) {
+      
+      if (!is.null(input$Login)) {
+        
+        if (input$Login > 0) {
+          
+          username <- isolate(input$userName)
+          password <- isolate(input$passwd)
+          
+          if (password == credentials[[username]]) {
+            USER$Logged <<- TRUE
+            USER$LoginPass <<- 1
+          }
+          USER$LoginPass <<- -1
+        }
+      }
+    }
   })
   
   # Simple Histogram ------------------------------------------------------
@@ -48,5 +70,65 @@ shinyServer(function(input, output) {
     data <- datasetInput()
     data
   }))
+  
+  output$value <- renderPrint({ 
+    if (input$text == "") {
+      output = ""
+    } else {
+      name = input$text 
+      body <- list(data = list(Name = name))
+      r <- POST(url = "http://localhost:8000/data", body = body, 
+                encode = "json", verbose())
+      output <- content(r, "parsed")$Message
+    }
+    output
+  })
+  
+  # UI Output -------------------------------------------------------------
+  output$ui <- renderUI({
+    if (USER$Logged == TRUE) {
+      mainbody
+    }
+    else {
+      if (USER$LoginPass >= 0) {
+        login
+      }
+      else {
+        loginfail
+      }
+    }
+  })
+  
+  # Output UI -----------------------------------------------------------------
+  mainbody <- fluidPage(
+      
+      # Application title -----------------------------------------------------  
+      titlePanel("Example of Using a RESTful API from RShiny"),
+      
+      # Sidebar with a slider input for number of bins 
+      sidebarLayout(
+        sidebarPanel(
+          selectInput("dataset", 
+                      "Dataset", 
+                      c("rock", "pressure", "cars")),
+          sliderInput("bins",
+                      "Number of bins:",
+                      min = 1,
+                      max = 50,
+                      value = 30),
+          textInput("text", 
+                    label = h3("Text input"), 
+                    value = ""),
+          verbatimTextOutput("value")
+        ),
+        
+        
+        # Show a plot of the generated distribution and Table   
+        mainPanel(
+          plotOutput("distPlot"),
+          DT::dataTableOutput("table")
+        )
+      )
+    )
   
 })

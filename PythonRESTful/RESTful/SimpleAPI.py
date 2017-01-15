@@ -1,3 +1,5 @@
+from pprint import pprint
+
 import hug
 import pandas as pd
 import logging
@@ -37,4 +39,11 @@ def rock_data():
     df = pd.read_csv(file_path)
     log.info("Loading the rock file to JSON")
     data = {"payload": df.to_json(orient="records")}
+    return data
+
+@hug.post('/data')
+def recieve_put(data):
+    log.info("Received Data!")
+    data["Message"] = "Hello {}, Python Added this!".format(data["Name"])
+    pprint(data)
     return data
