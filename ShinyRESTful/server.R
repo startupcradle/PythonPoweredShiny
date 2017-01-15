@@ -71,6 +71,7 @@ shinyServer(function(input, output, session) {
     data
   }))
   
+  # POST Request ----------------------------------------------------------	
   output$value <- renderPrint({ 
     if (input$text == "") {
       output = ""

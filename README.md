@@ -37,6 +37,12 @@ Three files are used to create the Dashboard:
 
 ### Running the Dashboard
 
+Features:
+
+*   GET requests
+*   Authentication (Basic)
+*   POST request
+
 Simply open any of the file R files; server, ui or global. Once open you will see a "Run" icon in the upper right hand side of the script pane, click that option.
 
 Adjacent to the "Run" icon is a dropdown, select "Run External" before running.

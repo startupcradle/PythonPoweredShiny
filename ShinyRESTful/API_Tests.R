@@ -30,5 +30,5 @@ name = "Dan!"
 body <- list(data = list(Name = name))
 r <- POST(url = "http://localhost:8000/data", body = body, 
           encode = "json", verbose())
-output <- content(r, "parsed")$Name
+output <- content(r, "parsed")$Message
 output
